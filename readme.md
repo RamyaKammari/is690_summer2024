@@ -15,9 +15,9 @@ Old Lectures that are good for review if you didn't have IS601 in the spring:
 
 Your homework is two parts:
 
-1.  Replace this link with the link to your DockerHub repo that is hosting your project:
+1.  Link to your DockerHub repo that is hosting my project: https://hub.docker.com/r/ramyakammari/is690_summer2024
 
-2.  Answer the following questions about the project in the following file - [here](answer.md)
+2.  Answer the following questions about the project in the following file ( Added the answers in the same file) - [here](answer.md)
 
 
 
