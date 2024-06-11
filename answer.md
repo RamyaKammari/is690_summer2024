@@ -549,12 +549,71 @@ Docker Compose helps maintain a consistent development and deployment environmen
 
 
 13. **Describe the role of GitHub Actions in your project's CI/CD pipeline. How do you automate testing and deployment using GitHub Actions?**
+Github Actions acts as the automation framework for automated testing and docker image deplyment in our project. This ensures that your code is consistently tested and deployed, reducing manual effort and minimizing errors.
+
+Here is how it is accomplished in our setup:
+
+#### Continuous Integration (CI)
+Automated Testing: When changes are pushed to the main branch or when a pull request targeting the main branch is created, the GitHub Actions workflow triggers automatically. The test job sets up a virtual environment on Ubuntu, installs the required Python version and dependencies, and then runs unit tests using Pytest. This ensures that all new or changed code is tested against a PostgreSQL database configured exactly as it would be in a production-like environment.
+
+#### Continuous Deployment (CD)
+Automated Deployment: Upon successful completion of the tests, the workflow transitions to the build-and-push-docket job. This job is dependent on the success of the test job, ensuring that only code that has passed all tests can move on to this stage.
+Docker Image Creation and Push: The code that passed the tests is used to build a Docker image, which is then tagged with the name of the branch and pushed to DockerHub. This is done using Docker Buildx for multi-platform compatibility, which is crucial for ensuring that the application runs smoothly across different systems.
+Docker Image Scanning: After the image is pushed to DockerHub, it is scanned for vulnerabilities with Trivy. The job is configured to fail if any critical or high-severity vulnerabilities are found, thus preventing insecure or potentially harmful code from being deployed.
 
 ## API Design and Implementation
 
 14. **What are REST APIs, and how do they function in your project? Provide an example of a REST endpoint from your user management system.**
+REST APIs, or Representational State Transfer APIs, are a set of rules and standards that allow for the creation of web services. They use HTTP methods such as GET, POST, PUT, DELETE, and others to perform CRUD (Create, Read, Update, Delete) operations on resources.
+
+We use REST APIs to interact with backend to achieve our usecases. In our Project we have used multiple REST APIs for creating, updating, deleting and fetching the user details and also the event details.
+
+All the rest APIs are defined in the [routers](https://github.com/RamyaKammari/is690_summer2024/tree/main/app/routers) folder for our project.
+
+-  We have GET, PUT, POST, DELETE apis implemented for event management and also user management.
+
+An example REST endpoint from the user management:
+
+```python
+@router.get(
+            "/users/{user_id}", 
+            response_model=UserResponse, name="get_user", 
+            tags=["User Management Requires (Admin or Manager Roles)"])
+async def get_user(
+    user_id: UUID, 
+    request: Request, 
+    db: AsyncSession = Depends(get_db), 
+    token: str = Depends(oauth2_scheme), 
+    current_user: dict = Depends(require_role(["ADMIN", "MANAGER"]))):
+    try:
+        user = await UserService.get_by_id(db, user_id)
+        return UserResponse.model_construct(
+            id=user.id,
+            nickname=user.nickname,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            bio=user.bio,
+            profile_picture_url=user.profile_picture_url,
+            github_profile_url=user.github_profile_url,
+            linkedin_profile_url=user.linkedin_profile_url,
+            role=user.role,
+            email=user.email,
+            last_login_at=user.last_login_at,
+            created_at=user.created_at,
+            updated_at=user.updated_at,
+            links=create_user_links(user.id, request)  
+        )
+    except UserNotFoundException as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+```
+This is a GET REST API which returns you the user details given the user id.
 
 15. **What is HATEOAS (Hypermedia as the Engine of Application State)? Provide an example of its implementation in your project's API responses, along with a screenshot.**
+HATEOAS (Hypermedia as the Engine of Application State) is a principle used in RESTful APIs that enables clients to dynamically navigate between the different functionalities of the API using hypermedia links provided in the responses. This approach allows clients to discover actions available to them directly through API responses, making the API more flexible and easier to integrate with, as clients don't need to hard-code URLs or understand the API's structure in advance.
+
+Implementations examples from our project:
+<img width="958" alt="Screenshot 2024-06-12 at 3 10 00 AM" src="https://github.com/RamyaKammari/is690_summer2024/assets/123509204/e4713c47-e570-4f57-93d0-f9897694d23c">
+
 
 ## Role-Based Access Control (RBAC)
 
