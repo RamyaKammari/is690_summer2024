@@ -543,6 +543,10 @@ logging.debug("Immediate decode check: {}".format(decoded))
 ## Project Management with Docker and CI/CD
 
 12. **Discuss the advantages of using Docker Compose for running your project. How does it help in maintaining a consistent development and deployment environment?**
+Docker Compose is a powerful tool for defining and running multi-container Docker applications. By using a YAML file to configure your application’s services, networks, and volumes, Docker Compose allows you to orchestrate these containers with simple commands.
+
+Docker Compose helps maintain a consistent development and deployment environment by ensuring that every team member, regardless of their operating system or development tools, uses the same container configurations. This consistency extends from development through to production, eliminating the common problem of discrepancies between environments that can lead to bugs and deployment issues. By defining services, networks, and volumes in a single docker-compose.yml file, Docker Compose ensures that the application runs the same way everywhere, reducing the chances of encountering "it works on my machine" problems and making it easier to manage and scale applications across different stages of the development lifecycle.
+
 
 13. **Describe the role of GitHub Actions in your project's CI/CD pipeline. How do you automate testing and deployment using GitHub Actions?**
 
